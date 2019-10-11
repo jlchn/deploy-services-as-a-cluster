@@ -1,0 +1,17 @@
+####
+#Classpath and file-based solution
+####
+server:
+   port: 8888
+spring:
+  profiles:
+    active: native
+  cloud:
+     config:
+       server:
+           native:
+              searchLocations: classpath:/config/demoservice2,classpath:/config/demoservice1
+
+####
+#Git-based solution
+####
