@@ -6,16 +6,17 @@ import com.netflix.zuul.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class ResponseFilter extends ZuulFilter{
-    private static final int  FILTER_ORDER=1;
-    private static final boolean  SHOULD_FILTER=true;
-    private static final Logger logger = LoggerFactory.getLogger(ResponseFilter.class);
 
     @Autowired
-    FilterUtils filterUtils;
+    private Tracer tracer;
 
     @Override
     public String filterType() {
@@ -24,22 +25,19 @@ public class ResponseFilter extends ZuulFilter{
 
     @Override
     public int filterOrder() {
-        return FILTER_ORDER;
+        return 1;
     }
 
     @Override
     public boolean shouldFilter() {
-        return SHOULD_FILTER;
+        return true;
     }
 
     @Override
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
 
-        logger.debug("Adding the correlation id to the outbound headers. {}", filterUtils.getSessionId());
-        ctx.getResponse().addHeader(FilterUtils.SESSION_ID, filterUtils.getSessionId());
-
-        logger.debug("Completing outgoing request for {}.", ctx.getRequest().getRequestURI());
+        ctx.getResponse().addHeader(FilterUtils.SESSION_ID, tracer.getCurrentSpan().traceIdString());
 
         return null;
     }

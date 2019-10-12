@@ -1,3 +1,9 @@
+spring:
+  sleuth:
+    sampler:
+      percentage:  1
+  zipkin:
+    baseUrl:  http://127.0.0.1:9411
 server:
   port: 5555
 

@@ -3,6 +3,7 @@ package com.jlchn.zuulservice.filters;
 import com.netflix.zuul.ZuulFilter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 public class TrackingFilter extends ZuulFilter{
 
     @Autowired
-    private FilterUtils filterUtils;
+    private Tracer tracer;
+
+    @Autowired
+    private  FilterUtils filterUtils;
 
     @Override
     public String filterType() {
@@ -32,7 +36,7 @@ public class TrackingFilter extends ZuulFilter{
     public Object run() {
 
         if (filterUtils.getSessionId() == null) {
-            filterUtils.setSessionId(java.util.UUID.randomUUID().toString());
+            filterUtils.setSessionId(tracer.getCurrentSpan().traceIdString());
             log.info("session-id generated: {}.", filterUtils.getSessionId());
         }
         return null;
