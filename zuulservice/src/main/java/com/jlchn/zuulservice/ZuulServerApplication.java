@@ -1,32 +1,25 @@
-package com.jlchn.demoservice1;
+package com.jlchn.zuulservice;
 
+
+import com.jlchn.zuulservice.utils.UserContextCopyInterceptor;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
-
-import com.jlchn.demoservice1.context.UserContextCopyInterceptor;
 
 @SpringBootApplication
-@RefreshScope
-@EnableCircuitBreaker
-@EnableDiscoveryClient
-public class Application {
+@EnableZuulProxy
+public class ZuulServerApplication {
 
-    /**
-     * create a rest template which supporting client round robbin
-     * @return
-     */
-    @Bean
     @LoadBalanced
+    @Bean
     public RestTemplate getRestTemplate(){
         RestTemplate template = new RestTemplate();
         List interceptors = template.getInterceptors();
@@ -39,7 +32,9 @@ public class Application {
 
         return template;
     }
+
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(ZuulServerApplication.class, args);
     }
 }
+

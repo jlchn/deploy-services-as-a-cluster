@@ -2,6 +2,8 @@ package com.jlchn.demoservice1.hystrix;
 
 import java.util.concurrent.Callable;
 
+import com.jlchn.demoservice1.context.UserContext;
+import com.jlchn.demoservice1.context.UserContextHolder;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 
 public class ThreadLocalCopyStrategy extends HystrixConcurrencyStrategy {
@@ -14,8 +16,8 @@ public class ThreadLocalCopyStrategy extends HystrixConcurrencyStrategy {
 
     private class DelegatingUserContextCallable<T> implements Callable<T> {
         private final Callable<T> delegate;
-        private String userInfo;
-        public DelegatingUserContextCallable(Callable<T> callable, String userContext) {
+        private UserContext userInfo;
+        public DelegatingUserContextCallable(Callable<T> callable, UserContext userContext) {
             this.delegate = callable;
             this.userInfo = userContext;
         }

@@ -6,11 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.jlchn.demoservice1.hystrix.UserContextHolder;
+import com.jlchn.demoservice1.context.UserContextHolder;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class Service {
 
     @Autowired
@@ -38,12 +41,12 @@ public class Service {
     )
     public String getFromRemote(){
         ResponseEntity<String> responseEntity = restTemplate.exchange("http://demoservice2/v1/", HttpMethod.GET, null, String.class);
-        System.out.println(Thread.currentThread().getName() + " " + UserContextHolder.getContext());
+        log.info("{} : {}", Thread.currentThread().getName(), UserContextHolder.getContext());
         return responseEntity.getBody();
     }
 
     private String fallback(){
-        System.out.println(Thread.currentThread().getName() + " fallback");
+        log.info("{} : {}", Thread.currentThread().getName(), "fallback");
         return "fallback";
     }
 }
