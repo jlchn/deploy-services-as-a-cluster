@@ -4,7 +4,6 @@ import java.util.Random;
 
 import com.jlchn.demoservice2.config.ServiceConfig;
 import com.jlchn.demoservice2.context.UserContextHolder;
-import com.netflix.discovery.converters.Auto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.sleuth.Span;

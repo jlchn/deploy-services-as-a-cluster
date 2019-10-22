@@ -1,0 +1,106 @@
+version: "2"
+services:
+
+  zipkinserver:
+    image: jianglichn/zipkinserver:20191021.1710
+    hostname: zipkinserver
+    ports:
+      - "9411:9411"
+    mem_reservation: 2048m
+    mem_limit: 2048m
+
+  configserver:
+    image: jianglichn/configserver:20191021.1510
+    hostname: configserver
+    ports:
+      - "8888"
+    mem_reservation: 2048m
+    mem_limit: 2048m
+
+  eurekaserver-1:
+    image: jianglichn/eurekaserver:20191021.1810
+    hostname: eurekaserver-1
+    ports:
+      - "8761:8761"      
+    environment:
+      - spring.profiles.active=prod
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-2:8761/eureka/
+    mem_reservation: 2048m
+    mem_limit: 2048m
+
+  eurekaserver-2:
+    image: jianglichn/eurekaserver:20191021.1810
+    hostname: eurekaserver-2
+    ports:
+      - "8762:8761"
+    environment:
+      - spring.profiles.active=prod
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-1:8761/eureka/
+    mem_reservation: 2048m
+    mem_limit: 2048m
+
+  zuulservice:
+    image: jianglichn/zuulservice:20191021.1810
+    hostname: zuulservice
+    depends_on:
+      - configserver
+      - eurekaserver-1
+      - eurekaserver-2
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
+    environment:
+      - spring.zipkin.baseUrl=http://zipkinserver:9411
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-1:8761/eureka/,http://eurekaserver-2:8761/eureka/
+    mem_reservation: 2048m
+    mem_limit: 2048m
+
+  demoservice1:
+    image: jianglichn/demoservice1:20191021.1710
+    hostname: demoservice1
+    depends_on:
+      - configserver
+      - eurekaserver-1
+      - eurekaserver-2
+    restart: unless-stopped
+    ports:
+      - "8000"
+    environment:
+      - spring.cloud.config.uri=http://configserver:8888
+      - spring.zipkin.baseUrl=http://zipkinserver:9411
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-1:8761/eureka/,http://eurekaserver-2:8761/eureka/
+    mem_reservation: 2048m
+    mem_limit: 2048m
+  demoservice2:
+    image: jianglichn/demoservice2:20191021.1710
+    hostname: demoservice2
+    depends_on:
+      - configserver
+      - eurekaserver-1
+      - eurekaserver-2
+    restart: unless-stopped
+    ports:
+      - "8001"
+    environment:
+      - spring.cloud.config.uri=http://configserver:8888
+      - spring.zipkin.baseUrl=http://zipkinserver:9411
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-1:8761/eureka/,http://eurekaserver-2:8761/eureka/
+    mem_reservation: 2048m
+    mem_limit: 2048m
+  
+  demoservice2-2:
+    image: jianglichn/demoservice2:20191021.1710
+    hostname: demoservice2-2
+    depends_on:
+      - configserver
+      - eurekaserver-1
+      - eurekaserver-2
+    restart: unless-stopped
+    ports:
+      - "8001"
+    environment:
+      - spring.cloud.config.uri=http://configserver:8888
+      - spring.zipkin.baseUrl=http://zipkinserver:9411
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-1:8761/eureka/,http://eurekaserver-2:8761/eureka/
+    mem_reservation: 2048m
+    mem_limit: 2048m

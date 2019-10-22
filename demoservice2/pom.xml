@@ -82,7 +82,7 @@
   </properties>
 
   <build>
-    <finalName>demoservice1</finalName>
+    <finalName>demoservice2</finalName>
      <plugins>
          <plugin>
              <groupId>org.springframework.boot</groupId>
