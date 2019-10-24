@@ -1,0 +1,216 @@
+version: "3.7"
+
+networks:
+  spring-cloud-demo-net:
+    driver: overlay
+           
+services:
+  zipkinserver:
+    image: jianglichn/zipkinserver:20191021.1710
+    networks:
+      - spring-cloud-demo-net
+    hostname: zipkinserver
+    ports:
+      - "9411:9411"
+    environment:
+      - spring.cloud.inetutils.ignoredInterfaces=lo.*
+      - spring.cloud.inetutils.preferredNetworks=10.0
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      resources:
+        limits: # Hard limit - Docker does not allow to allocate more
+          cpus: '1.00'
+          memory: 3096M
+        reservations:  # Soft limit - Docker makes best effort to return to it
+          cpus: '0.1'
+          memory: 1024M  
+
+  configserver:
+    image: jianglichn/configserver:20191021.1510
+    networks:
+      - spring-cloud-demo-net
+    hostname: configserver
+    ports:
+      - "8888"
+    environment:
+      - spring.cloud.inetutils.ignoredInterfaces=lo.*
+      - spring.cloud.inetutils.preferredNetworks=10.0
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels: [app=configserver]
+      resources:
+        limits: # Hard limit - Docker does not allow to allocate more
+          cpus: '1.00'
+          memory: 3096M
+        reservations:  # Soft limit - Docker makes best effort to return to it
+          cpus: '0.2'
+          memory: 1024M   
+
+  eurekaserver-1:
+    image: jianglichn/eurekaserver:20191021.1810
+    networks:
+      - spring-cloud-demo-net
+    hostname: eurekaserver-1
+    ports:
+      - "8761:8761"      
+    environment:
+      - spring.profiles.active=prod
+      - spring.cloud.inetutils.ignoredInterfaces=lo.*
+      - spring.cloud.inetutils.preferredNetworks=10.0
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-1:8761/eureka/,http://eurekaserver-2:8761/eureka/
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      resources:
+        limits: # Hard limit - Docker does not allow to allocate more
+          cpus: '1.00'
+          memory: 3096M
+        reservations:  # Soft limit - Docker makes best effort to return to it
+          cpus: '0.2'
+          memory: 1024M  
+
+  eurekaserver-2:
+    image: jianglichn/eurekaserver:20191021.1810
+    networks:
+      - spring-cloud-demo-net
+    hostname: eurekaserver-2
+    ports:
+      - "8762:8761"
+    environment:
+      - spring.profiles.active=prod
+      - spring.cloud.inetutils.ignoredInterfaces=lo.*
+      - spring.cloud.inetutils.preferredNetworks=10.0
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-1:8761/eureka/,http://eurekaserver-2:8761/eureka/
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 60s
+      resources:
+        limits: # Hard limit - Docker does not allow to allocate more
+          cpus: '1.00'
+          memory: 3096M
+        reservations:  # Soft limit - Docker makes best effort to return to it
+          cpus: '0.2'
+          memory: 1024M  
+
+  zuulservice:
+    image: jianglichn/zuulservice:20191021.1810
+    networks:
+      - spring-cloud-demo-net
+    hostname: zuulservice
+    depends_on:
+      - configserver
+      - eurekaserver-1
+      - eurekaserver-2
+    ports:
+      - "5555:5555"
+    environment:
+      - spring.zipkin.baseUrl=http://zipkinserver:9411
+      - spring.cloud.inetutils.ignoredInterfaces=lo.*
+      - spring.cloud.inetutils.preferredNetworks=10.0
+      - eureka.instance.preferIpAddress=true
+      - eureka.instance.instanceId=$${spring.cloud.client.ipAddress}:$${server.port}
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-1:8761/eureka/,http://eurekaserver-2:8761/eureka/
+    deploy:
+      resources:
+        limits: # Hard limit - Docker does not allow to allocate more
+          cpus: '1.00'
+          memory: 3096M
+        reservations:  # Soft limit - Docker makes best effort to return to it
+          cpus: '0.2'
+          memory: 1024M  
+
+  demoservice1:
+    image: jianglichn/demoservice1:20191021.1710
+    networks:
+      - spring-cloud-demo-net
+    hostname: demoservice1
+    depends_on:
+      - configserver
+      - eurekaserver-1
+      - eurekaserver-2
+    ports:
+      - "8000"
+    environment:
+      - spring.cloud.inetutils.ignoredInterfaces=lo.*
+      - spring.cloud.inetutils.preferredNetworks=10.0
+      - spring.cloud.config.uri=http://configserver:8888
+      - spring.cloud.config.failFast=true
+      - spring.zipkin.baseUrl=http://zipkinserver:9411
+      - eureka.instance.preferIpAddress=true
+      - eureka.instance.instanceId=$${spring.cloud.client.ipAddress}:$${server.port}
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-1:8761/eureka/,http://eurekaserver-2:8761/eureka/
+      - test=false
+    deploy:
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: pause
+        order: start-first       
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits: # Hard limit - Docker does not allow to allocate more
+          cpus: '1.00'
+          memory: 3096M
+        reservations:  # Soft limit - Docker makes best effort to return to it
+          cpus: '0.1'
+          memory: 1024M  
+
+  demoservice2:
+    image: jianglichn/demoservice2:20191021.1710
+    networks:
+      - spring-cloud-demo-net
+    hostname: demoservice2
+    depends_on:
+      - configserver
+      - eurekaserver-1
+      - eurekaserver-2
+    ports:
+      - "8001"
+    environment:
+      - spring.cloud.inetutils.ignoredInterfaces=lo.*
+      - spring.cloud.inetutils.preferredNetworks=10.0
+      - spring.cloud.config.uri=http://configserver:8888
+      - spring.cloud.config.failFast=true
+      - eureka.instance.preferIpAddress=true
+      - eureka.instance.instanceId=$${spring.cloud.client.ipAddress}:$${server.port}
+      - spring.zipkin.baseUrl=http://zipkinserver:9411
+      - eureka.client.serviceUrl.defaultZone=http://eurekaserver-1:8761/eureka/,http://eurekaserver-2:8761/eureka/
+    deploy:
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: pause
+        order: start-first   
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits: # Hard limit - Docker does not allow to allocate more
+          cpus: '1.00'
+          memory: 3096M
+        reservations:  # Soft limit - Docker makes best effort to return to it
+          cpus: '0.2'
+          memory: 2048M 
