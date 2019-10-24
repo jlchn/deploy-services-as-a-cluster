@@ -102,7 +102,7 @@ services:
     networks:
       - spring-cloud-demo-net
     hostname: zuulservice
-    depends_on:
+    depends_on: # depends_on option is ignored when deploying a stack in swarm mode with a version 3 Compose file!
       - configserver
       - eurekaserver-1
       - eurekaserver-2
