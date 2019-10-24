@@ -1,5 +1,8 @@
 
 docker swarm will help to start a new container when one exits.
+
+depends_on option is ignored when deploying a stack in swarm mode with a version 3 Compose file!
+
 create a swarm cluster
 
 ```shell
