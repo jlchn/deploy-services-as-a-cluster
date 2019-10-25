@@ -32,7 +32,10 @@
 
 ### storage
 
-[todo]
+- bind
+- volumes
+- aufs
+- backup and restore
 
 
 ### other references
