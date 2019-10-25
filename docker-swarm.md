@@ -33,19 +33,35 @@ create or update a stack/cluster
 ```
 # this will not restart the docker when the replicas show running.
 # if the service's defination is not changed in the yml file, it won't be restart as well.
-docker stack deploy -c docker-swarm.yml test-stack 
+docker stack deploy -c docker-swarm.yml ${STACK_NAME}
 ```
 
-update a service 
+force update a service 
 
 ```shell
-docker service update x1jqad6yz09o --force
+docker service update ${SERVICE_NAME} --force
+```
+
+scale the service
+
+```
+# changing the replicas value in docker-compose.yml, then run below commnand
+docker stack deploy -c docker-swarm.yml ${STACK_NAME}
+```
+
+ list the tasks of service(a single container running in a service is called a task) 
+```shell
+docker service ps ${SERVICE_NAME}
+```
+list the tasks of stack
+```shell
+docker stack ps ${STACK_NAME}
 ```
 
 remove a stack
 
-```
-docker stack rm demo-stack-3
+```shell
+docker stack rm ${STACK_NAME}
 ```
 
 rolling upgrade a service
@@ -57,7 +73,7 @@ from shell
 # --update-order start-first: start the new one, then stop the old one
 # --update-failure-action=rollback : enforce a rollback when an update fails instead of pause the update
 
-docker service update yuk1nbmqf0gj  XXXXX(--images:xx)  --update-parallelism 1 --update-delay 30s --update-failure-action=rollback --update-order start-first
+docker service update ${SERVICE_NAME}  XXXXX(--images:xx)  --update-parallelism 1 --update-delay 30s --update-failure-action=rollback --update-order start-first
 
 ```
 from compose file
@@ -76,11 +92,13 @@ from compose file
 
 rollback a service to previous version
 
-```
-docker service rollback service-name --rollback-parallelism 1 --rollback-delay 30s
+```shell
+docker service rollback ${SERVICE_NAME} --rollback-parallelism 1 --rollback-delay 30s
 ```
 
 
 ## References
 
-about resource reservation: https://semaphoreci.com/community/tutorials/scheduling-services-on-a-docker-swarm-mode-cluster
+- [docker commands cheatsheet](./docker-command-cheatsheet.md)
+
+- [about resource reservation](https://semaphoreci.com/community/tutorials/scheduling-services-on-a-docker-swarm-mode-cluster)
