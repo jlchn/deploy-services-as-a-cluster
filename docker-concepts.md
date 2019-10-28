@@ -38,9 +38,9 @@
 - backup and restore
 
 
-### other references
+## other references
 
-#### x509 issues
+### x509 issues
 
 ```shell
 sudo vi /etc/default/docker
