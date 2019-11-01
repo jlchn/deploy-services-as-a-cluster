@@ -28,6 +28,7 @@
 - host
 - bridge 
 - overlay
+    - [the overlay network architecture](https://success.docker.com/article/ucp-service-discovery-swarm)
 - macvlan
 
 ### storage
