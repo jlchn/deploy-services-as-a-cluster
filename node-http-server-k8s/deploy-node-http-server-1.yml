@@ -1,0 +1,29 @@
+apiVersion: apps/v1  # 1
+kind: Deployment          # 2
+metadata:
+  name: http-server-1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:          # 3
+      app: http-server-1
+  template:
+    metadata:
+      namespace: custom-ns-1
+      name: pod-http-server-1
+      labels:
+        app: http-server-1
+    spec:
+      containers:
+      - image: jianglichn/node-http-server-1:20191031.1510
+        name: http-server-1
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        env:
+        - name: CALL
+          value: "http://10.109.36.211:8081"
