@@ -12,6 +12,8 @@
 *.iws
 .idea/
 
+.factorypath
+
 .DS_Store/
 /target
 
