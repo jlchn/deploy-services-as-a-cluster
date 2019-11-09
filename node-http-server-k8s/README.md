@@ -4,9 +4,6 @@
 ```bash
 kubectl apply -f deploy-node-http-server-2.yml
 kubectl apply -f service-node-http-server-2.yml
-kubectl get svc # check service 2's service ip and port
-
-# add 10.109.36.211:8081 to deploy-node-http-server-1.yml, then
 
 kubectl apply -f deploy-node-http-server-2.yml
 kubectl apply -f service-node-http-server-2.yml

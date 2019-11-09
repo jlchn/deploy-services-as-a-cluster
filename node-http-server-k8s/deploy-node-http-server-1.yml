@@ -26,4 +26,4 @@ spec:
           protocol: TCP
         env:
         - name: CALL
-          value: "http://10.109.36.211:8081"
+          value: "http://service-http-server-2.default:8081"
