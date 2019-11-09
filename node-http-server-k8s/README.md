@@ -19,8 +19,8 @@ service-http-server-2   NodePort    10.109.36.211    <none>        8081:30190/TC
 minikube ip # check host ip
 192.168.99.100
 
-curl http://192.168.99.100:30680 to access node-http-server-1
-
+curl http://192.168.99.100:30680 # to access node-http-server-1
+curl http://192.168.99.100:30680/call # to access node-http-server-1 call node-http-server-2
 ```
 
 ## using Ingress
