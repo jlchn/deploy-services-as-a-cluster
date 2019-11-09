@@ -1,5 +1,5 @@
 
-## a demonstration to deloy service clusters(spring cloud and nodejs) to single machine, docker swarm, kubernetes, ECS and EKS
+# A demonstration to deloy service clusters(spring cloud and nodejs) to single machine, docker swarm, kubernetes, ECS and EKS
 
 - [start the spring cloud cluster on a single machine
  by using docker compose](single-node.md)
