@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-node-http-server
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: jlchn.com
+    http:
+      paths:
+      - path: /1/(.*)
+        backend:
+          serviceName: service-http-server-1
+          servicePort: 8081
+      - path: /2/(.*)
+        backend:
+          serviceName: service-http-server-2
+          servicePort: 8081

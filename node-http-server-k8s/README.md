@@ -25,7 +25,18 @@ curl http://192.168.99.100:30680/call # to access node-http-server-1 call node-h
 
 ## using Ingress
 
-todo
+```bash
+# follow the steps described in section `using NodePort`, then
+minikube addons enable ingress
+kubectl apply -f ingress-node-http-server.yml
+kubectl get ingress
+kubectl describe ingress ingress-node-http-server
+
+http://jlchn.com/1/     # call node-http-server-1 from outside of the world
+http://jlchn.com/1/call # make node-http-server-1 call node-http-server-2 from outside of the world
+http://jlchn.com/2/     # call node-http-server-2 from outside of the world
+```
+
 
 ## other useful commands
 
@@ -97,6 +108,7 @@ kubectl delete deployment rc-node-backend-4
 ```bash
 kubectl get services # get all services in the current namespace
 kubectl get svc      # get all services in the current namespace
+kubectl get svc --all-namespaces
 
 NAME                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
 service-http-server-1   NodePort    10.102.163.235   <none>        8081:30680/TCP   16h
@@ -136,6 +148,8 @@ kubectl exec http-server-1-866c7bb467-29ts5  -- ls /home/ubuntu/
 kubectl logs http-server-1-866c7bb467-29ts5 
 kubectl logs -f http-server-1-866c7bb467-29ts5 
 kubectl logs http-server-1-866c7bb467-29ts5 --previous          # dump pod logs (stdout) for a previous instantiation of a container
+
+kubectl exec -it -n kube-system nginx-ingress-controller-57bf9855c8-4kgjm cat /etc/nginx/nginx.con # check ingress-nginx configuration file
 
 ```
 
