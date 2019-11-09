@@ -81,10 +81,8 @@ kubectl delete ns custom-namespace # delete all pods by deleting the whole names
 kubectl delete pod --all # delete all pods
 ```
 
-### delete a deployment or replica set
+### deployment
 ```bash
-kubectl get rs
-kubectl delete rs rc-node-backend-4
 kubectl get deployment
 kubectl delete deployment rc-node-backend-4
 ```
