@@ -37,6 +37,11 @@ kubectl get nodes # list cluster nodes
 kubectl get nodes -l gpu=true   # list node with label
 kubectl describe node $NODE_NAME # detail information of a node
 kubectl label node minikube-node gpu=true # to label a node
+kubectl cordon my-node         # mark my-node as unschedulable
+kubectl drain my-node          # drain my-node in preparation for maintenance
+kubectl uncordon my-node       # mark my-node as schedulable
+kubectl top node my-node       # show metrics for a given node
+
 ```
 
 ### namespace
@@ -125,7 +130,12 @@ kubectl delete rs rs-name
 ### troubleshooting
 
 ```bash
-kubectl exec -it http-server-1-866c7bb467 bash  # run bash inside of pod container
+kubectl exec -it http-server-1-866c7bb467-29ts5 bash            # run bash inside of pod container
+kubectl exec http-server-1-866c7bb467-29ts5  -- ls /home/ubuntu/
+
+kubectl logs http-server-1-866c7bb467-29ts5 
+kubectl logs -f http-server-1-866c7bb467-29ts5 
+kubectl logs http-server-1-866c7bb467-29ts5 --previous          # dump pod logs (stdout) for a previous instantiation of a container
 
 ```
 
