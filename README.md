@@ -12,3 +12,11 @@
 - [start the nodejs services on K8S](node-http-server-k8s/README.md)
 
 ## Knowledges under the Hook
+
+- docker
+  - [docker basic concepts](./docker-concepts.md)
+  - [docker command cheatsheet](./docker-command-cheatsheet.md)
+  - [docker bridge network](./docker-bridge-network.md)
+  - [docker overlay network](./docker-overlay-network.md)
+  - [docker service, service discovery, load banlance and ingress](https://success.docker.com/article/ucp-service-discovery-swarm)
+- k8s
