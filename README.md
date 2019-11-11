@@ -11,7 +11,7 @@
     - [callee service task defination](node-http-server-ecs/aws-task-defination-node-http-server-2.json)
 - [start the nodejs services on K8S](node-http-server-k8s/README.md)
 
-## Knowledges under the Hook
+## under the Hooks
 
 - docker
   - [docker basic concepts](./docker-concepts.md)
