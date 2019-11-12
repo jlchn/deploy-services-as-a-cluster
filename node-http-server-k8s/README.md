@@ -39,7 +39,7 @@ http://jlchn.com/2/     # call node-http-server-2 from outside of the world
 ```
 
 
-## other useful commands
+## concepts and commands
 
 ### cluster and node
 
@@ -67,6 +67,14 @@ kubectl create namespace custom-namespace  # create a namespace using raw comman
 ```
 
 ### pod
+
+a pod is a group of containers that will always run together(withe the same lifecycle) on the same worker node and in the same Linux namespace.
+
+- each pod is like a logical host machine with its own IP, hostname, processes, and so on.
+- all containers of a pod run under the same Network and UTS namespaces, they all share the same hostname and network interfaces.
+- all containers of a pod run under the same IPC namespace and can communicate through IPC.
+- using Volume to allow containers of a pod to share filesystems. by default, the filesystem of each container is fully isolated from each other because container’s filesystem comes from the container image.
+
 
 ```bash
 kubectl create -f kubia-manual.yaml -n custom-namespace # create pod in a specific namespace, or add a namespace: `custom-namespace` entry to the metadata section 
@@ -106,6 +114,15 @@ kubectl delete deployment rc-node-backend-4
 
 ### services
 
+ a Service is a resource that indicates an entry to a group of pods providing the same service. 
+ 
+ each service has an IP address and port that never change while the service exists. clients can open connections to that IP and port, and those connections are then routed to one of the pods backing that service. this way, clients of service don’t need to know the location of pods, allowing those pods to be moved around the cluster at any time. 
+
+ #### how does the service discovery work?
+
+ - all pods running in the cluster are automatically configured to use k8s DNS(k8s does that by modifying /etc/resolv.conf file in each container).
+ - the DNS service is inside a pod of kube-system namespace, which knows all the services running in your system.
+
 ```bash
 kubectl get services # get all services in the current namespace
 kubectl get svc      # get all services in the current namespace
@@ -127,6 +144,20 @@ if service-http-server-1 wants to access service-http-server-2, there are two wa
  kubectl exec http-server-2-58b5b9b84c-2wvm5 -- curl -s http://service-http-server-2.default:8081 # {service-name}.{namespace-name}.{configurable-domain-suffix}:{port}
 ```
 
+ #### service endpoint
+
+an Endpoints resource is a list of IP addresses and ports exposing a service. we can think of it as the ip and port pair of pods backing the services.
+
+the Endpoints resource sites in between the service and pods, when a client connects to a service, the service proxy selects one of those IP and port pairs and redirects the incoming connection to this Endpoints.
+
+```bash
+
+kubectl describe service service-http-server-1 | grep Endpoints
+
+Endpoints:                172.17.0.11:3000,172.17.0.13:3000
+```
+
+
 ### configmaps
 
 ```bash
@@ -146,6 +177,10 @@ for the second way, it will take about 10 seconds for k8s to check and re-mount 
 
 
 ### replication controller and ReplicaSet
+
+a ReplicationController ensures its pods are always kept running with desired replicas.
+
+a ReplicaSet is similar to a ReplicationController, but it has more powerful pod selectors.
 
 ```bash
 kubectl get rc
