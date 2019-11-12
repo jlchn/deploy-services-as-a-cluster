@@ -112,7 +112,7 @@ kubectl get deployment
 kubectl delete deployment rc-node-backend-4
 ```
 
-### services
+### service
 
  a Service is a resource that indicates an entry to a group of pods providing the same service. 
  
@@ -144,7 +144,7 @@ if service-http-server-1 wants to access service-http-server-2, there are two wa
  kubectl exec http-server-2-58b5b9b84c-2wvm5 -- curl -s http://service-http-server-2.default:8081 # {service-name}.{namespace-name}.{configurable-domain-suffix}:{port}
 ```
 
- #### service endpoint
+ #### Endpoints
 
 an Endpoints resource is a list of IP addresses and ports exposing a service. we can think of it as the ip and port pair of pods backing the services.
 
@@ -158,7 +158,7 @@ Endpoints:                172.17.0.11:3000,172.17.0.13:3000
 ```
 
 
-### configmaps
+### Configmaps
 
 ```bash
 kubectl apply -f config-node-http-server-1.yml # create a configmap
@@ -176,7 +176,7 @@ for the second way, it will take about 10 seconds for k8s to check and re-mount 
 
 
 
-### replication controller and ReplicaSet
+### ReplicationController and ReplicaSet
 
 a ReplicationController ensures its pods are always kept running with desired replicas.
 
