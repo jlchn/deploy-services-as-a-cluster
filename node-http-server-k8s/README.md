@@ -134,6 +134,17 @@ kubectl apply -f config-node-http-server-1.yml # create a configmap
 kubectl get configmaps config-node-http-server-1 -o yaml # describe configmaps
 ```
 
+note, there are 2 ways to use configMap together with your apps:
+
+- mount configMap as env variables.
+- mount configMap to a volume, the apps read the config values from the specific path.
+
+for the first way, the env variables won't be updated after you update the configMap, because the env variables are injected into container when pods start.
+
+for the second way, it will take about 10 seconds for k8s to check and re-mount the volume to pods, even though, to achieve the configMap hot update, the app itself need a way to know when the changes happen. one posible solution might be inroducing a sidecar container which monitoring the config files, when there are changes, it send a signal to your app and then it loads latest configs. this also require the app having the logics to receive the specific signals.
+
+
+
 ### replication controller and ReplicaSet
 
 ```bash
