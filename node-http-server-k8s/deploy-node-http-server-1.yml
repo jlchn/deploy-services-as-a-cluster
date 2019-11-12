@@ -1,5 +1,5 @@
 apiVersion: apps/v1  # 1
-kind: Deployment          # 2
+kind: Deployment     # 2
 metadata:
   name: http-server-1
 spec:
@@ -15,7 +15,7 @@ spec:
         app: http-server-1
     spec:
       containers:
-      - image: jianglichn/node-http-server-1:20191031.1510
+      - image: jianglichn/node-http-server-1:20191112.1211
         name: http-server-1
         livenessProbe:
           httpGet:
@@ -25,5 +25,13 @@ spec:
         - containerPort: 3000
           protocol: TCP
         env:
-        - name: CALL
-          value: "http://service-http-server-2.default:8081"
+        - name: NODE_ENV
+          value: "production"
+        volumeMounts:
+        - name: config-files-node-http-server-1
+          mountPath: /usr/src/app/configs
+      volumes:
+        - name: config-files-node-http-server-1
+          configMap: 
+            name: config-node-http-server-1
+    

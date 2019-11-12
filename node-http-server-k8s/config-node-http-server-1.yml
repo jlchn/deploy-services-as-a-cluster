@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-node-http-server-1
+  namespace: default
+data:
+  production.json: |-
+    {
+      "CALL": "http://service-http-server-2.default:8081",
+      "PORT": 3000,
+      "IS_K8S": true
+    }
+
+    

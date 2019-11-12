@@ -2,6 +2,7 @@
 ## using NodePort
 
 ```bash
+kubectl apply -f config-node-http-server-1.yml
 kubectl apply -f deploy-node-http-server-2.yml
 kubectl apply -f service-node-http-server-2.yml
 
@@ -126,6 +127,13 @@ if service-http-server-1 wants to access service-http-server-2, there are two wa
  kubectl exec http-server-2-58b5b9b84c-2wvm5 -- curl -s http://service-http-server-2.default:8081 # {service-name}.{namespace-name}.{configurable-domain-suffix}:{port}
 ```
 
+### configmaps
+
+```bash
+kubectl apply -f config-node-http-server-1.yml # create a configmap
+kubectl get configmaps config-node-http-server-1 -o yaml # describe configmaps
+```
+
 ### replication controller and ReplicaSet
 
 ```bash
@@ -152,6 +160,11 @@ kubectl logs http-server-1-866c7bb467-29ts5 --previous          # dump pod logs 
 kubectl exec -it -n kube-system nginx-ingress-controller-57bf9855c8-4kgjm cat /etc/nginx/nginx.con # check ingress-nginx configuration file
 
 ```
+
+#### CrashLoopBackOff 
+
+- the app inside the container keeps crashing, to know why, you can check the logs of this pods
+- some type of parameters of the pod or container was configured incorrectly
 
 ### start minikube inside of China network
 
