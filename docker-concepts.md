@@ -17,7 +17,17 @@
 - stack
     - stack is a group of services that share dependencies, and can be orchestrated and scaled together
 
+## architecture
 
+- client
+    - user use client to send commands to server
+- daemon
+    - do all things clients requested
+    - components
+        - server: receive requests
+        - engine: dispatcher
+- registry
+- graph: keep downloaded images
 ## key components
 
 - network
@@ -40,6 +50,24 @@
 
 
 ## other references
+
+### Linux Namespace
+
+Docker use Linux Namespace to create a sandbox for process.
+
+- USER (user and user group)
+- PID  (process)
+- UTS  (host and host name)
+- IPC  (message queue, mutex, shared memory)
+- MOUNT(file system mount point)
+- NETWORK
+
+### Cgroup(Control Group)
+Docker use Cgroup to limit the CPU, memory, Network in specific namespaces.
+
+### libcontainer
+
+libcontainer is a tool composes of operations on Namespace and Cgroup.
 
 ### x509 issues
 
